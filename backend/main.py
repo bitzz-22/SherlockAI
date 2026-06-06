@@ -12,6 +12,16 @@ from google.genai import types
 # 1. ARCHITECTURAL & ENVIRONMENT VARIABLE INITIALIZATION
 # ============================================================================
 
+# Load environment variables from .env.local in the parent directory
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env.local')
+if os.path.exists(env_path):
+    with open(env_path) as f:
+        for line in f:
+            if '=' in line and not line.strip().startswith('#'):
+                k, v = line.strip().split('=', 1)
+                if k.strip() not in os.environ:
+                    os.environ[k.strip()] = v.strip().strip('"\'')
+
 # Initialize FastAPI application
 app = FastAPI(
     title="SherlockAI Backend",
@@ -164,9 +174,9 @@ async def submit_item(item: ItemSubmitRequest):
                 
             # Step D: Enforce conditional routing thresholds
             if ai_score > 90:
-                status = "approved"
+                status = "pending" # High match, send to admin
             else:
-                status = "pending"
+                status = "approved" # No match, post publicly
 
         # Step E: Persist into Supabase database
         # Mapping to actual Next.js supabase table schema
@@ -181,7 +191,7 @@ async def submit_item(item: ItemSubmitRequest):
             "longitude": item.longitude,
             "image_urls": item.image_urls,
             "status": "active" if status == "approved" else "pending",
-            # We don't have ai_confidence_score column, but we can stick to 'active' vs 'pending' based on score.
+            "ai_score": ai_score,
         }
         
         insert_response = supabase.table("items").insert(insert_payload).execute()

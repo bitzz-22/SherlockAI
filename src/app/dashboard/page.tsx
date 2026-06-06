@@ -3,36 +3,30 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button-new";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard - SherlockAI",
   description: "Your SherlockAI dashboard.",
 };
 
-async function getDashboardItems() {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!base || !key) {
-    return [];
-  }
-
-  let items: { id: string; type: string; title: string; status: string }[] = [];
-  try {
-    const res = await fetch(`${base}/rest/v1/items?select=id,type,title,status&order=created_at.desc&limit=20`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
-      cache: "no-store",
-    });
-    items = await res.json();
-  } catch {
-    items = [];
-  }
-
-  return items;
-}
-
 export default async function DashboardPage() {
-  const items = await getDashboardItems();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/auth/login");
+  }
+
+  const { data: rawItems, error } = await supabase
+    .from("items")
+    .select("id,type,title,status,image_urls")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  const items = rawItems || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/60 to-white">
@@ -79,10 +73,12 @@ export default async function DashboardPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">Matches</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Pending</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-foreground">0</p>
+              <p className="text-3xl font-bold text-foreground">
+                {items.filter((i) => i.status === "pending").length}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -98,11 +94,22 @@ export default async function DashboardPage() {
               <div className="space-y-3">
                 {items.map((item, idx) => (
                   <div key={item.id ?? idx} className="flex items-center justify-between p-3 rounded-lg border">
-                    <div>
-                      <p className="font-medium text-foreground">{item.title ?? "Untitled"}</p>
-                      <p className="text-sm text-muted-foreground capitalize">
-                        {item.type} &middot; {item.status}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-md bg-slate-100 border overflow-hidden flex-shrink-0">
+                        {item.image_urls && item.image_urls.length > 0 ? (
+                          <img src={item.image_urls[0]} alt={item.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Search className="w-5 h-5 text-slate-300" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{item.title ?? "Untitled"}</p>
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {item.type} &middot; {item.status}
+                        </p>
+                      </div>
                     </div>
                     <Link href={`/items/${item.id}`}>
                       <Button variant="ghost" size="sm">

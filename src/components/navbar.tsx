@@ -1,14 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, Bell } from "lucide-react";
+import { Menu, X, Search, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname();
+  const supabase = createClient();
+
+  useEffect(() => {
+    // Check active session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   if (typeof window !== "undefined") {
     window.addEventListener("scroll", () => {
@@ -16,11 +38,16 @@ export function Navbar() {
     });
   }
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/browse", label: "Browse" },
-    { href: "/about", label: "About" },
     { href: "/report", label: "Report Item" },
+    user ? { href: "/dashboard", label: "Dashboard" } : { href: "/about", label: "About Us" },
   ];
 
   return (
@@ -58,12 +85,22 @@ export function Navbar() {
             <Button variant="ghost" size="icon">
               <Bell className="w-5 h-5" />
             </Button>
-            <Link href="/auth/login">
-              <Button variant="default">Sign In</Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button variant="outline">Get Started</Button>
-            </Link>
+            
+            {user ? (
+              <Button variant="outline" onClick={handleSignOut} className="gap-2">
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </Button>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button variant="default">Sign In</Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button variant="outline">Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -95,12 +132,24 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-3 space-y-2">
-                <Link href="/auth/login" className="block">
-                  <Button variant="default" className="w-full">Sign In</Button>
-                </Link>
-                <Link href="/auth/register" className="block">
-                  <Button variant="outline" className="w-full">Get Started</Button>
-                </Link>
+                {user ? (
+                  <Button variant="outline" className="w-full gap-2" onClick={() => {
+                    handleSignOut();
+                    setIsOpen(false);
+                  }}>
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Link href="/auth/login" className="block">
+                      <Button variant="default" className="w-full" onClick={() => setIsOpen(false)}>Sign In</Button>
+                    </Link>
+                    <Link href="/auth/register" className="block">
+                      <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>Get Started</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

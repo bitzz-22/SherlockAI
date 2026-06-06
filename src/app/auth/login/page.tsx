@@ -79,10 +79,13 @@ export default function LoginPage() {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-center">
-<p className="text-sm text-muted-foreground">
-  Don&apos;t have an account? <Link href="/auth/register" className="text-primary hover:underline">Sign up</Link>
-</p>
+          <CardFooter className="flex flex-col justify-center space-y-2 text-center">
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account? <Link href="/auth/register" className="text-primary hover:underline">Sign up</Link>
+            </p>
+            <Link href="/admin/login" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+              Login as Administrator
+            </Link>
           </CardFooter>
         </Card>
       </motion.div>

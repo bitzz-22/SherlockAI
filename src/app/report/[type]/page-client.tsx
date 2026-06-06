@@ -22,7 +22,24 @@ interface PageClientProps {
 export function ReportPageClient({ type }: PageClientProps) {
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
+
+  const handleFiles = (files: FileList | File[]) => {
+    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (!fileArray.length) return;
+    
+    const readers = fileArray.slice(0, 4).map((file) =>
+      new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      })
+    );
+    Promise.all(readers).then((urls) => {
+      setImages((prev) => [...prev, ...urls].slice(0, 4));
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +70,7 @@ export function ReportPageClient({ type }: PageClientProps) {
           <Link href="/" className="flex items-center gap-2 mb-6">
             <Search className="w-6 h-6 text-primary" />
             <span className="text-xl font-bold text-foreground">
-              Campus<span className="text-primary">Sherlock AI</span>
+              Sherlock<span className="text-primary">AI</span>
             </span>
           </Link>
           <Card>
@@ -89,29 +106,45 @@ export function ReportPageClient({ type }: PageClientProps) {
                 </div>
                 <div className="space-y-2">
                   <Label>Photos</Label>
-                  <Input type="file" accept="image/*" multiple onChange={(e) => {
-                    if (!e.target.files?.length) return;
-                    const readers = Array.from(e.target.files).slice(0, 4).map((file) =>
-                      new Promise<string>((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result as string);
-                        reader.readAsDataURL(file);
-                      })
-                    );
-                    Promise.all(readers).then((urls) => {
-                      setImages((prev) => [...prev, ...urls].slice(0, 4));
-                    });
-                  }} />
-                  <div className="grid grid-cols-4 gap-3">
-                    {images.map((url, i) => (
-                      <div key={i} className="relative aspect-square rounded-lg border overflow-hidden bg-muted">
-                        <img src={url} alt={`upload-${i}`} className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => setImages((p) => p.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 bg-background/80 rounded-full p-1">
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
+                  <div 
+                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                      isDragging ? "border-primary bg-primary/5" : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+                    }`}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                    onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        handleFiles(e.dataTransfer.files);
+                      }
+                    }}
+                    onClick={() => document.getElementById("file-upload")?.click()}
+                  >
+                    <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-slate-700">Drag & drop images here</p>
+                    <p className="text-xs text-slate-500 mt-1">or click to browse from your computer (max 4)</p>
+                    <input 
+                      id="file-upload" 
+                      type="file" 
+                      accept="image/*" 
+                      multiple 
+                      className="hidden" 
+                      onChange={(e) => e.target.files && handleFiles(e.target.files)} 
+                    />
                   </div>
+                  {images.length > 0 && (
+                    <div className="grid grid-cols-4 gap-3 mt-3">
+                      {images.map((url, i) => (
+                        <div key={i} className="relative aspect-square rounded-lg border overflow-hidden bg-muted">
+                          <img src={url} alt={`upload-${i}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={(e) => { e.stopPropagation(); setImages((p) => p.filter((_, idx) => idx !== i)); }} className="absolute top-1 right-1 bg-background/80 rounded-full p-1 shadow-sm hover:bg-white transition-colors">
+                            <X className="w-4 h-4 text-slate-700" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <Button type="submit" disabled={loading} className="w-full">
                   {loading ? "Submitting..." : `Submit ${type === "lost" ? "Lost" : "Found"} Item`}
