@@ -59,7 +59,7 @@ export function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/95 backdrop-blur-md shadow-sm border-b" : "bg-transparent"
+        scrolled ? "bg-white/80 backdrop-blur-xl shadow-md border-b border-indigo-500/10" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

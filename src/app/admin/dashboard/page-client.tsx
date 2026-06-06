@@ -13,7 +13,7 @@ export function AdminDashboardClient({ initialItems }: { initialItems: any[] }) 
 
   const handleLogout = () => {
     document.cookie = "admin_access=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "/admin/login";
+    window.location.href = "/auth/login";
   };
 
   const handleApprove = async (id: string) => {

@@ -28,7 +28,7 @@ export default function HomePage() {
             >
               <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
                 Find what&apos;s lost,{" "}
-                <span className="text-primary">return what&apos;s found</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-500">return what&apos;s found</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground">
                 Sherlock AI uses AI to make recovering lost items on campus simple,
@@ -170,7 +170,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <div className="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow h-full">
+                <div className="p-6 rounded-xl border bg-card hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
                     {feature.icon}
                   </div>
@@ -203,21 +203,21 @@ export default function HomePage() {
             {[
               {
                 step: "1",
-                title: "Report",
+                title: "Report an Item",
                 description:
-                  "Submit a lost or found item with photos and location details.",
+                  "Quickly report a lost or found item on campus by uploading a photo and providing basic details.",
               },
               {
                 step: "2",
-                title: "Match",
+                title: "AI Scoring",
                 description:
-                  "Our AI engine automatically finds potential matches across campus.",
+                  "Our system uses advanced AI to compare found items against lost reports, generating an automated Match Score.",
               },
               {
                 step: "3",
-                title: "Connect",
+                title: "Admin Approval & Return",
                 description:
-                  "Chat securely with matches and arrange to return the item.",
+                  "High-scoring matches are flagged for Admin verification. Once approved, you can safely connect to return the item.",
               },
             ].map((step, i) => (
               <motion.div
@@ -250,7 +250,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200 mb-6">
               Ready to find what you&apos;ve lost?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
