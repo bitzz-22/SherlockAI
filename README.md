@@ -1,5 +1,5 @@
-# CampusTrace
-AI-Powered Lost and Found for Universities.
+# SherlockAI
+SherlockAI is an AI-powered campus lost-and-found platform that uses intelligent matching to help students quickly reconnect with their misplaced belongings.
 
 ## Environment Variables
 Create a `.env.local` in the project root:
