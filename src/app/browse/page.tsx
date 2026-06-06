@@ -7,22 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Browse Items - CampusTrace",
+  title: "Browse Items - SherlockAI",
   description: "Browse lost and found items on campus.",
 };
 
 async function getItems() {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!base || !key) {
-    return [];
-  }
-
   let items: { id: string; type: string; title: string; category: string; location: string | null; created_at: string }[] = [];
   try {
-    const res = await fetch(`${base}/rest/v1/items?select=id,type,title,category,location,created_at&status=eq.active&order=created_at.desc&limit=20`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    const res = await fetch(`http://127.0.0.1:8000/api/items`, {
       cache: "no-store",
     });
     items = await res.json();
@@ -43,7 +35,7 @@ export default async function BrowsePage() {
             <Link href="/" className="flex items-center gap-2 mb-2">
               <Search className="w-6 h-6 text-primary" />
               <span className="text-xl font-bold text-foreground">
-                Campus<span className="text-primary">Trace</span>
+                Sherlock<span className="text-primary">AI</span>
               </span>
             </Link>
             <h1 className="text-3xl font-bold text-foreground mt-4">Browse Items</h1>
@@ -74,7 +66,13 @@ export default async function BrowsePage() {
           </CardContent>
         </Card>
 
-        {items.length === 0 ? (
+        {!Array.isArray(items) ? (
+          <Card>
+            <CardContent className="py-10 text-center text-muted-foreground text-red-500">
+              Failed to load items from the backend server.
+            </CardContent>
+          </Card>
+        ) : items.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center text-muted-foreground">
               No items yet. Check back soon or report a lost item.

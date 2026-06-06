@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button-new";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Dashboard - CampusTrace",
-  description: "Your CampusTrace dashboard.",
+  title: "Dashboard - SherlockAI",
+  description: "Your SherlockAI dashboard.",
 };
 
 async function getDashboardItems() {
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
             <Link href="/" className="flex items-center gap-2 mb-2">
               <Search className="w-6 h-6 text-primary" />
               <span className="text-xl font-bold text-foreground">
-                Campus<span className="text-primary">Trace</span>
+                Sherlock<span className="text-primary">AI</span>
               </span>
             </Link>
             <h1 className="text-3xl font-bold text-foreground mt-4">Dashboard</h1>

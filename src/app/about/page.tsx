@@ -4,8 +4,8 @@ import { Search } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "About - CampusTrace",
-  description: "About CampusTrace.",
+  title: "About - SherlockAI",
+  description: "About SherlockAI.",
 };
 
 export default function AboutPage() {
@@ -15,16 +15,16 @@ export default function AboutPage() {
         <Link href="/" className="flex items-center gap-2 mb-8">
           <Search className="w-6 h-6 text-primary" />
           <span className="text-xl font-bold text-foreground">
-            Campus<span className="text-primary">Trace</span>
+            Sherlock<span className="text-primary">AI</span>
           </span>
         </Link>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">About CampusTrace</CardTitle>
+            <CardTitle className="text-2xl">About SherlockAI</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>
-              CampusTrace is an AI-powered lost and found platform built for universities.
+              SherlockAI is an AI-powered lost and found platform built for universities.
               We help students and staff reunite with their belongings faster through intelligent image and text matching, secure messaging, and a verified campus network.
             </p>
             <p>

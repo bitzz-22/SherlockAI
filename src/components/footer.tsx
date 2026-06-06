@@ -12,7 +12,7 @@ export function Footer() {
                 <Search className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground">
-                Campus<span className="text-primary">Sherlock AI</span>
+                Sherlock<span className="text-primary">AI</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-md">

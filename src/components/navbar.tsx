@@ -38,7 +38,7 @@ export function Navbar() {
               <Search className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold text-foreground">
-              Campus<span className="text-primary">Trace</span>
+              Sherlock<span className="text-primary">AI</span>
             </span>
           </Link>
 
@@ -58,10 +58,10 @@ export function Navbar() {
             <Button variant="ghost" size="icon">
               <Bell className="w-5 h-5" />
             </Button>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="default">Sign In</Button>
             </Link>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button variant="outline">Get Started</Button>
             </Link>
           </div>
@@ -95,10 +95,10 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-3 space-y-2">
-                <Link href="/login" className="block">
+                <Link href="/auth/login" className="block">
                   <Button variant="default" className="w-full">Sign In</Button>
                 </Link>
-                <Link href="/register" className="block">
+                <Link href="/auth/register" className="block">
                   <Button variant="outline" className="w-full">Get Started</Button>
                 </Link>
               </div>

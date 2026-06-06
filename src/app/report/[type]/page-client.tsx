@@ -13,7 +13,7 @@ import { createItemAction } from "@/actions/item/create";
 import { useToast } from "@/components/ui/toast";
 import dynamic from "next/dynamic";
 
-const MapPicker = dynamic(() => import("@/components/map-picker"), { ssr: false });
+const MapPicker = dynamic(() => import("@/components/map-picker").then((mod) => mod.MapPicker), { ssr: false });
 
 interface PageClientProps {
   type: "lost" | "found";

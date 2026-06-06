@@ -24,7 +24,7 @@ export default function VerifyEmailPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground text-center">
-              Click the link in that email to verify your account and access the full CampusTrace experience.
+              Click the link in that email to verify your account and access the full SherlockAI experience.
             </p>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">

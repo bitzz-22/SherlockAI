@@ -25,46 +25,41 @@ export async function createItemAction(formData: FormData) {
   const imageUrlsRaw = String(formData.get("imageUrls") || "[]");
   const imageUrls = JSON.parse(imageUrlsRaw) as string[];
 
-  let embedding: number[] | null = null;
-
+  // Send request to FastAPI backend instead of inserting directly
   try {
-    embedding = await generateTextEmbedding(
-      `${title} ${category} ${location} ${description}`
-    );
-  } catch (error) {
-    console.error("Embedding generation failed:", error);
+    const res = await fetch("http://127.0.0.1:8000/api/items/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        type,
+        title,
+        description,
+        category,
+        location: location || null,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        image_urls: imageUrls,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      return { error: `Backend error: ${errorText}` };
+    }
+
+    const data = await res.json();
+
+    revalidatePath("/browse");
+    revalidatePath("/dashboard");
+
+    return { success: true, item: data };
+  } catch (error: any) {
+    console.error("Failed to submit item to backend:", error);
+    return { error: error.message || "Failed to connect to backend server" };
   }
-
-  const { data, error } = await supabase
-    .from("items")
-    .insert({
-      user_id: user.id,
-      type,
-      title,
-      description,
-      category,
-      location: location || null,
-      latitude: latitude || null,
-      longitude: longitude || null,
-      image_urls: imageUrls,
-      embedding,
-      status: "active",
-    })
-    .select()
-    .single();
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/browse");
-  revalidatePath("/dashboard");
-
-  if (type === "found") {
-    await triggerMatching(data.id);
-  }
-
-  return { success: true, item: data };
 }
 
 export async function triggerMatching(itemId: string) {

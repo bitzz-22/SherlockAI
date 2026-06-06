@@ -1,7 +1,7 @@
 import { ReportPageClient } from "./page-client";
 
 export const metadata = {
-  title: "Report Item - CampusTrace",
+  title: "Report Item - SherlockAI",
   description: "Report a lost or found item on campus",
 };
 
