@@ -30,13 +30,17 @@ export function Navbar() {
     return () => subscription.unsubscribe();
   }, [supabase]);
 
-  if (pathname?.startsWith("/admin")) return null;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleScroll = () => {
+        setScrolled(window.scrollY > 20);
+      };
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      setScrolled(window.scrollY > 20);
-    });
-  }
+  if (pathname?.startsWith("/admin")) return null;
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();

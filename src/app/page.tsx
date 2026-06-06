@@ -35,7 +35,7 @@ export default function HomePage() {
                 fast, and secure. Connect with your university network today.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <Link href="/register">
+                <Link href="/auth/register">
                   <Button size="lg" className="gap-2">
                     Get Started Free
                     <ArrowRight className="w-4 h-4" />
@@ -257,7 +257,7 @@ export default function HomePage() {
               Join thousands of students already using Sherlock AI to recover their
               belongings.
             </p>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="lg" variant="secondary" className="gap-2">
                 Create Free Account
                 <ArrowRight className="w-4 h-4" />

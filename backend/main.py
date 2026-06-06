@@ -132,7 +132,7 @@ async def submit_item(item: ItemSubmitRequest):
         ai_score = 0
         status = "approved" # Default to approved if no candidates exist to match against
         
-        if candidates:
+        if candidates and item.type == "found":
             # Step B: Package context for Gemini
             prompt = f"""
             You are a forensic analyst for a campus lost and found system.
